@@ -1,65 +1,74 @@
+-- xoa database neu da ton tai
 DROP DATABASE IF EXISTS Testing_System_Assignment_1;
 CREATE DATABASE Testing_System_Assignment_1;
 USE Testing_System_Assignment_1;
 CREATE TABLE Department (
-	DepartmentID INT UNSIGNED,
-    DepartmentName VARCHAR(255)
+    DepartmentID TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    DepartmentName VARCHAR(50) NOT NULL
 );
 CREATE TABLE `Position` (
-	PositionID INT,
-    PositionName VARCHAR(50)
+    PositionID TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    PositionName ENUM('DEV', 'Test', 'Scrum Master', 'PM')
 );
 CREATE TABLE `Account` (
-	AccountID	INT,
-	Username	VARCHAR(255),
-	DepartmentID	INT,
-	PositionID	INT
+    AccountID TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    Emai VARCHAR(50) NOT NULL,
+    Username VARCHAR(50) NOT NULL,
+    DepartmentID TINYINT UNSIGNED,
+    PositionID TINYINT UNSIGNED
 );
-CREATE TABLE `Group`(
-	GroupID	INT,
-	GroupName	VARCHAR(255),
-	CreatorID	INT,
-	CreateDate	DATE
+CREATE TABLE `Group` (
+    GroupID TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    GroupName VARCHAR(50) NOT NULL,
+    CreatorID TINYINT UNSIGNED,
+    CreateDate DATE DEFAULT(NOW())
 );
-CREATE TABLE GroupAccount(
-	GroupID	INT,
-	AccountID	INT,
-	JoinDate	DATE
+CREATE TABLE GroupAccount (
+    GroupID TINYINT UNSIGNED,
+    AccountID TINYINT UNSIGNED,
+    JoinDate DATE DEFAULT(NOW()), -- CURRENT_TIMESTAMP
+    PRIMARY KEY (GroupID , AccountID),
+    FOREIGN KEY (GroupID) REFERENCES `Group`(GroupID),
+    FOREIGN KEY (AccountID) REFERENCES `Account`(AccountID)
 );
-CREATE TABLE TypeQuestion(
-	TypeID INT,
-    TypeName VARCHAR(50)
+CREATE TABLE TypeQuestion (
+    TypeID TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    TypeName ENUM('Essay', 'Multiple-Choice')
 );
-CREATE TABLE CategoryQuestion(
-	CategoryID	INT,
-	CategoryName	VARCHAR(255)
+CREATE TABLE CategoryQuestion (
+    CategoryID TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    CategoryName VARCHAR(50)
 );
-CREATE TABLE Question(
-	QuestionID	INT,
-	Content	VARCHAR(255),
-	CategoryID	INT,
-	TypeID	INT,
-	CreatorID	INT,
-	CreateDate	DATE
+CREATE TABLE Question (
+    QuestionID TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    Content VARCHAR(255) NOT NULL,
+    CategoryID TINYINT UNSIGNED,
+    TypeID TINYINT UNSIGNED,
+    CreatorID TINYINT UNSIGNED,
+    CreateDate DATE DEFAULT(NOW())
 );
-CREATE TABLE Answer(
-	AnswerID	INT,
-	Content	VARCHAR(255),
-	QuestionID	INT,
-	isCorrect	VARCHAR(50)
+CREATE TABLE Answer (
+    AnswerID TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    Content VARCHAR(255),
+    QuestionID TINYINT UNSIGNED,
+    isCorrect ENUM('dung', 'sai'),
+	FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID)
 );
-CREATE TABLE Exam(
-	ExamID	INT,
-	Code	VARCHAR(255),
-	Title	VARCHAR(255),
-	CategoryID	INT,
-	Duration	DATE,
-	reatorID	INT,
-	CreateDate	DATE
+CREATE TABLE Exam (
+    ExamID TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    `Code` VARCHAR(10),
+    Title VARCHAR(50),
+    CategoryID TINYINT UNSIGNED,
+    Duration TINYINT UNSIGNED CHECK(Duration BETWEEN 60 AND 120), -- BETWEEN start AND end, >, <, >=, <=, =
+    reatorID TINYINT UNSIGNED NOT NULL,
+    CreateDate DATE DEFAULT(NOW())
 );
-CREATE TABLE ExamQuestion(
-	ExamID	INT,
-	QuestionID	INT
+CREATE TABLE ExamQuestion (
+    ExamID TINYINT UNSIGNED,
+    QuestionID TINYINT UNSIGNED,
+    PRIMARY KEY (ExamID , QuestionID),
+    FOREIGN KEY (ExamID) REFERENCES Exam(ExamID),
+    FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID)
 );
 
 
